@@ -11,7 +11,7 @@ A comprehensive utility package for enhanced Umami Analytics tracking that handl
 <script async src="https://analytics.yourdomain.com/script.js" data-website-id="your-website-id"></script>
 
 <!-- Include the UmamiKit -->
-<script src="umami-kit.js"></script>
+<script defer src="umami-kit.js"></script>
 
 <!-- Auto-initialize with basic tracking -->
 <html data-umami-auto-track>
