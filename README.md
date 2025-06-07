@@ -1,4 +1,4 @@
-# Umami Tracker Usage Guide
+# Umami Kit Usage Guide
 
 A comprehensive utility package for enhanced Umami Analytics tracking that handles clicks, scroll depth, time on page, element visibility, and more.
 
@@ -10,8 +10,8 @@ A comprehensive utility package for enhanced Umami Analytics tracking that handl
 <!-- Include your Umami script first -->
 <script async src="https://analytics.yourdomain.com/script.js" data-website-id="your-website-id"></script>
 
-<!-- Include the UmamiTracker -->
-<script src="umami-tracker.js"></script>
+<!-- Include the UmamiKit -->
+<script src="umami-kit.js"></script>
 
 <!-- Auto-initialize with basic tracking -->
 <html data-umami-auto-track>
@@ -31,7 +31,7 @@ A comprehensive utility package for enhanced Umami Analytics tracking that handl
 
 <script>
 // Or initialize manually with full control
-const tracker = new UmamiTracker({
+const kit = new UmamiKit({
   debug: true,
   autoTrackAllClicks: true, // Track ALL clickable elements
   scrollDepthThresholds: [25, 50, 75, 90],
@@ -43,7 +43,7 @@ const tracker = new UmamiTracker({
 ### Configuration Options
 
 ```javascript
-const tracker = new UmamiTracker({
+const kit = new UmamiKit({
   // Scroll tracking
   scrollDepthThresholds: [25, 50, 75, 90], // Percentage thresholds
   scrollDebounceMs: 100, // Debounce scroll events
@@ -68,17 +68,17 @@ const tracker = new UmamiTracker({
 
 ## Data Attribute Configuration
 
-You can configure the tracker directly via HTML data attributes:
+You can configure the kit directly via data attributes:
 
 ```html
 <!-- Basic auto-initialization -->
-<html data-umami-auto-track>
+<body data-umami-auto-track>
 
 <!-- Track ALL clicks automatically -->
 <body data-umami-auto-track data-umami-auto-track-all-clicks="true">
 
 <!-- Custom configuration -->
-<html 
+<body 
   data-umami-auto-track
   data-umami-debug="true"
   data-umami-scroll-thresholds="20,40,60,80,100"
@@ -196,10 +196,10 @@ Track when important content becomes visible:
 
 ```javascript
 // Simple event
-tracker.trackEvent('button-click');
+kit.trackEvent('button-click');
 
 // With custom data
-tracker.trackEvent('purchase-completed', {
+kit.trackEvent('purchase-completed', {
   product: 'premium-plan',
   price: 29.99,
   currency: 'USD'
@@ -210,28 +210,28 @@ tracker.trackEvent('purchase-completed', {
 
 ```javascript
 // Track all forms with class 'contact-form'
-tracker.trackForm('.contact-form', 'contact-form-submit');
+kit.trackForm('.contact-form', 'contact-form-submit');
 
 // Track specific form
-tracker.trackForm('#newsletter-form', 'newsletter-signup');
+kit.trackForm('#newsletter-form', 'newsletter-signup');
 ```
 
 ### Download Tracking
 
 ```javascript
 // Track common file downloads (PDF, ZIP, DOC)
-tracker.trackDownloads();
+kit.trackDownloads();
 
 // Custom selector
-tracker.trackDownloads('a[href$=".pdf"], a[href$=".xlsx"]');
+kit.trackDownloads('a[href$=".pdf"], a[href$=".xlsx"]');
 ```
 
 ### Search Tracking
 
 ```javascript
 // Track internal search
-tracker.trackSearch('#search-input', 'site-search');
-tracker.trackSearch('.search-box', 'product-search');
+kit.trackSearch('#search-input', 'site-search');
+kit.trackSearch('.search-box', 'product-search');
 ```
 
 ## Advanced Usage
@@ -240,21 +240,21 @@ tracker.trackSearch('.search-box', 'product-search');
 
 ```javascript
 // Product view
-tracker.trackEvent('product-view', {
+kit.trackEvent('product-view', {
   productId: 'PROD123',
   category: 'electronics',
   price: 199.99
 });
 
 // Add to cart
-tracker.trackEvent('add-to-cart', {
+kit.trackEvent('add-to-cart', {
   productId: 'PROD123',
   quantity: 2,
   value: 399.98
 });
 
 // Purchase
-tracker.trackEvent('purchase', {
+kit.trackEvent('purchase', {
   orderId: 'ORDER456',
   revenue: 399.98,
   items: 2
@@ -265,18 +265,18 @@ tracker.trackEvent('purchase', {
 
 ```javascript
 // Article reading progress
-tracker.trackEvent('article-25-percent', {
+kit.trackEvent('article-25-percent', {
   articleId: 'blog-post-123',
   title: 'How to Use Analytics'
 });
 
 // Video interactions
-tracker.trackEvent('video-play', {
+kit.trackEvent('video-play', {
   videoId: 'intro-video',
   duration: 120
 });
 
-tracker.trackEvent('video-complete', {
+kit.trackEvent('video-complete', {
   videoId: 'intro-video',
   watchTime: 115
 });
@@ -286,12 +286,12 @@ tracker.trackEvent('video-complete', {
 
 ```javascript
 // Funnel step completion
-tracker.trackEvent('signup-step-1', { step: 'email-entered' });
-tracker.trackEvent('signup-step-2', { step: 'password-created' });
-tracker.trackEvent('signup-complete', { method: 'email' });
+kit.trackEvent('signup-step-1', { step: 'email-entered' });
+kit.trackEvent('signup-step-2', { step: 'password-created' });
+kit.trackEvent('signup-complete', { method: 'email' });
 
 // Feature usage
-tracker.trackEvent('feature-used', {
+kit.trackEvent('feature-used', {
   feature: 'advanced-search',
   userType: 'premium'
 });
@@ -301,7 +301,7 @@ tracker.trackEvent('feature-used', {
 
 ```javascript
 // Get current session stats
-const stats = tracker.getStats();
+const stats = kit.getStats();
 console.log(stats);
 // {
 //   timeOnPage: 125,
@@ -325,7 +325,7 @@ Keep event data consistent and meaningful:
 
 ```javascript
 // Good
-tracker.trackEvent('product-click', {
+kit.trackEvent('product-click', {
   productId: 'PROD123',
   category: 'electronics',
   price: 199.99,
@@ -333,14 +333,14 @@ tracker.trackEvent('product-click', {
 });
 
 // Avoid
-tracker.trackEvent('click', {
+kit.trackEvent('click', {
   stuff: 'thing',
   x: 'y'
 });
 ```
 
 ### 3. Performance Considerations
-- The tracker debounces scroll events automatically
+- The kit debounces scroll events automatically
 - Idle detection prevents unnecessary heartbeat events
 - Use `visibilityThreshold` to avoid tracking barely visible elements
 
@@ -353,7 +353,7 @@ tracker.trackEvent('click', {
 
 ```javascript
 // When done (e.g., SPA route change)
-tracker.destroy();
+kit.destroy();
 ```
 
 ## Debug Mode
@@ -361,8 +361,8 @@ tracker.destroy();
 Enable debug mode to see what's being tracked:
 
 ```javascript
-const tracker = new UmamiTracker({ debug: true });
-// Console will show: [UmamiTracker] Event tracked: scroll-depth { depth: 25, percentage: "25%" }
+const kit = new UmamiKit({ debug: true });
+// Console will show: [UmamiKit] Event tracked: scroll-depth { depth: 25, percentage: "25%" }
 ```
 
 ## Integration Examples
@@ -374,20 +374,20 @@ import { useEffect } from 'react';
 
 function App() {
   useEffect(() => {
-    const tracker = new UmamiTracker({
+    const kit = new UmamiKit({
       debug: process.env.NODE_ENV === 'development'
     });
 
     // Track React-specific events
-    tracker.trackEvent('app-loaded', { 
+    kit.trackEvent('app-loaded', { 
       version: process.env.REACT_APP_VERSION 
     });
 
-    return () => tracker.destroy();
+    return () => kit.destroy();
   }, []);
 
   const handlePurchase = (product) => {
-    tracker.trackEvent('purchase', {
+    kit.trackEvent('purchase', {
       productId: product.id,
       price: product.price
     });
@@ -420,18 +420,18 @@ function App() {
 <script>
 export default {
   mounted() {
-    this.tracker = new UmamiTracker();
+    this.kit = new UmamiKit();
   },
   
   beforeDestroy() {
-    if (this.tracker) {
-      this.tracker.destroy();
+    if (this.kit) {
+      this.kit.destroy();
     }
   },
   
   methods: {
     trackPurchase() {
-      this.tracker.trackEvent('purchase-click', {
+      this.kit.trackEvent('purchase-click', {
         product: this.product.name,
         price: this.product.price
       });
