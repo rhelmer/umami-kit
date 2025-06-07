@@ -1,0 +1,36 @@
+{
+  "name": "umami-kit",
+  "version": "0.0.1",
+  "description": "A comprehensive utility for enhanced Umami Analytics tracking",
+  "main": "umami-kit.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rhelmer/umami-kit.git"
+  },
+  "keywords": [
+    "umami",
+    "analytics",
+    "scroll",
+    "deptch",
+    "click",
+    "tracking"
+  ],
+  "author": "Rob Helmer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rhelmer/umami-kit/issues"
+  },
+  "homepage": "https://github.com/rhelmer/umami-kit#readme",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.0.0-beta.3"
+  },
+  "jest": {
+    "testEnvironment": "jsdom"
+  }
+}
