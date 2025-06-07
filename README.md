@@ -13,15 +13,29 @@ A comprehensive utility package for enhanced Umami Analytics tracking that handl
 <!-- Include the UmamiTracker -->
 <script src="umami-tracker.js"></script>
 
-<!-- Auto-initialize (optional) -->
-<div data-umami-auto-track></div>
+<!-- Auto-initialize with basic tracking -->
+<html data-umami-auto-track>
+
+<!-- Auto-initialize with ALL click tracking enabled -->
+<body 
+  data-umami-auto-track
+  data-umami-auto-track-all-clicks="true"
+  data-umami-debug="true">
+
+<!-- Auto-initialize with custom configuration -->
+<html 
+  data-umami-auto-track
+  data-umami-scroll-thresholds="20,40,60,80,100"
+  data-umami-heartbeat="15000"
+  data-umami-debug="true">
 
 <script>
-// Or initialize manually
+// Or initialize manually with full control
 const tracker = new UmamiTracker({
-  debug: true, // Enable console logging
-  scrollDepthThresholds: [25, 50, 75, 90], // Custom scroll thresholds
-  heartbeatInterval: 30000 // Send time updates every 30 seconds
+  debug: true,
+  autoTrackAllClicks: true, // Track ALL clickable elements
+  scrollDepthThresholds: [25, 50, 75, 90],
+  heartbeatInterval: 30000
 });
 </script>
 ```
@@ -39,8 +53,9 @@ const tracker = new UmamiTracker({
   idleTimeout: 60000, // Consider user idle after 1 minute
   
   // Click tracking
-  autoTrackClicks: true, // Enable automatic click tracking
-  clickSelector: '[data-umami-track]', // Elements to track
+  autoTrackClicks: true, // Enable click tracking system
+  autoTrackAllClicks: false, // Track ALL clickable elements (buttons, links, etc.)
+  clickSelector: '[data-umami-track]', // Specific elements to track
   
   // Visibility tracking
   visibilityThreshold: 0.5, // 50% visibility threshold
@@ -51,7 +66,59 @@ const tracker = new UmamiTracker({
 });
 ```
 
-## Automatic Tracking Features
+## Data Attribute Configuration
+
+You can configure the tracker directly via HTML data attributes:
+
+```html
+<!-- Basic auto-initialization -->
+<html data-umami-auto-track>
+
+<!-- Track ALL clicks automatically -->
+<body data-umami-auto-track data-umami-auto-track-all-clicks="true">
+
+<!-- Custom configuration -->
+<html 
+  data-umami-auto-track
+  data-umami-debug="true"
+  data-umami-scroll-thresholds="20,40,60,80,100"
+  data-umami-heartbeat="15000">
+```
+
+**Available Data Attributes:**
+- `data-umami-auto-track-all-clicks="true"` - Track all clickable elements
+- `data-umami-debug="true"` - Enable debug logging
+- `data-umami-scroll-thresholds="25,50,75,90"` - Custom scroll percentages
+- `data-umami-heartbeat="30000"` - Heartbeat interval in milliseconds
+
+## Click Tracking Modes
+
+### Mode 1: Selective Tracking (Default)
+Only tracks elements with `data-umami-track` attribute:
+
+```html
+<button data-umami-track="cta-click">Subscribe</button>
+<!-- This button will be tracked -->
+
+<button>Regular Button</button>
+<!-- This button will NOT be tracked -->
+```
+
+### Mode 2: All Clicks Tracking
+Set `autoTrackAllClicks: true` to track ALL clickable elements:
+
+```html
+<html data-umami-auto-track data-umami-auto-track-all-clicks="true">
+<!-- Now ALL buttons, links, and clickable elements are tracked automatically -->
+```
+
+**What gets tracked in "All Clicks" mode:**
+- All `<button>` elements
+- All `<a>` links  
+- All `<input type="submit">` buttons
+- All elements with `role="button"`
+
+
 
 ### 1. Scroll Depth Tracking
 Automatically tracks when users scroll to 25%, 50%, 75%, and 90% of the page.

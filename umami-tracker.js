@@ -15,6 +15,7 @@ class UmamiTracker {
 
             // Click tracking options
             autoTrackClicks: true,
+            autoTrackAllClicks: false, // Track ALL clicks, not just data-umami-track elements
             clickSelector: '[data-umami-track]',
 
             // Visibility tracking options
@@ -159,6 +160,21 @@ class UmamiTracker {
     // Click Tracking
     setupClickTracking() {
         if (!this.options.autoTrackClicks) return;
+
+        // Track ALL clicks if autoTrackAllClicks is enabled
+        if (this.options.autoTrackAllClicks) {
+            document.addEventListener('click', (e) => {
+                const element = e.target.closest('button, a, input[type="submit"], [role="button"]');
+                if (element) {
+                    const eventData = {
+                        ...this.getElementData(element),
+                        clickType: 'auto-tracked'
+                    };
+                    this.track('click', eventData);
+                }
+            });
+            this.log('All clicks tracking enabled');
+        }
 
         // Track elements with data-umami-track attribute
         document.addEventListener('click', (e) => {
@@ -360,8 +376,26 @@ class UmamiTracker {
 }
 
 // Auto-initialize if data-umami-auto-track attribute is present
-if (document.querySelector('[data-umami-auto-track]')) {
-    window.umamiTracker = new UmamiTracker();
+const autoTrackElement = document.querySelector('[data-umami-auto-track]');
+if (autoTrackElement) {
+    const options = {};
+
+    // Parse configuration from data attributes
+    if (autoTrackElement.dataset.umamiAutoTrackAllClicks === 'true') {
+        options.autoTrackAllClicks = true;
+    }
+    if (autoTrackElement.dataset.umamiDebug === 'true') {
+        options.debug = true;
+    }
+    if (autoTrackElement.dataset.umamiScrollThresholds) {
+        options.scrollDepthThresholds = autoTrackElement.dataset.umamiScrollThresholds
+            .split(',').map(n => parseInt(n.trim()));
+    }
+    if (autoTrackElement.dataset.umamiHeartbeat) {
+        options.heartbeatInterval = parseInt(autoTrackElement.dataset.umamiHeartbeat);
+    }
+
+    window.umamiTracker = new UmamiTracker(options);
 }
 
 // Export for module systems
