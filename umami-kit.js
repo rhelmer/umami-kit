@@ -305,7 +305,7 @@ class UmamiTracker {
      */
     trackForm(formSelector, eventName = 'form-submit') {
         document.querySelectorAll(formSelector).forEach(form => {
-            form.addEventListener('submit', () => {
+            form.addEventListener('submit', (e) => {
                 const formData = new FormData(form);
                 const data = {
                     formId: form.id || 'unnamed-form',
@@ -396,6 +396,18 @@ if (autoTrackElement) {
     }
 
     window.umamiTracker = new UmamiTracker(options);
+}
+
+// Export for module systems
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = UmamiTracker;
+}
+
+// AMD support
+if (typeof define === 'function' && define.amd) {
+    define([], function () {
+        return UmamiTracker;
+    });
 }
 
 // Global export
