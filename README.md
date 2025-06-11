@@ -2,6 +2,8 @@
 
 A comprehensive utility package for enhanced Umami Analytics tracking that handles clicks, scroll depth, time on page, element visibility, and more.
 
+See [my blog post](https://www.rhelmer.org/blog/automatic-event-tracking-with-umami-kit/) for more info.
+
 ## Installation & Setup
 
 ### Basic Setup
