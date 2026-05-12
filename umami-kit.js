@@ -1,6 +1,6 @@
 /**
- * UmamiTracker - A comprehensive utility for enhanced Umami Analytics tracking
- * Handles clicks, scroll depth, time on page, element visibility, and more
+ * UmamiTracker — part of umami-kit; enhanced engagement tracking on top of the
+ * official Umami script (`window.umami`). Not an Umami product API name.
  */
 class UmamiTracker {
     constructor(options = {}) {
@@ -395,7 +395,8 @@ if (autoTrackElement) {
         options.heartbeatInterval = parseInt(autoTrackElement.dataset.umamiHeartbeat);
     }
 
-    window.umamiTracker = new UmamiTracker(options);
+    const instance = new UmamiTracker(options);
+    window.umamiTracker = instance;
 }
 
 // Export for module systems
@@ -410,5 +411,7 @@ if (typeof define === 'function' && define.amd) {
     });
 }
 
-// Global export
+// Global export (this class name is from umami-kit, not from Umami’s `window.umami`)
 window.UmamiTracker = UmamiTracker;
+/** Alias only: same constructor as `UmamiTracker`, for the npm package name `umami-kit`. */
+window.UmamiKit = UmamiTracker;

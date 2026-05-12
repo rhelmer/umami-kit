@@ -1,51 +1,87 @@
-# Umami Kit Usage Guide
+# umami-kit
 
-A comprehensive utility package for enhanced Umami Analytics tracking that handles clicks, scroll depth, time on page, element visibility, and more.
+**umami-kit** is a small browser script that layers engagement tracking (scroll depth, dwell time with idle detection, element visibility, exit summaries, and delegated clicks) on top of the official [Umami](https://umami.is/) tracking script. It only talks to Umami through `window.umami.track(eventName, data)` as described in the current [Tracker functions](https://docs.umami.is/docs/tracker-functions) documentation.
 
-See [my blog post](https://www.rhelmer.org/blog/automatic-event-tracking-with-umami-kit/) for more info.
+The npm package and project name are **umami-kit**. The JavaScript class is **`UmamiTracker`** (that name comes from **this library**, not from Umami; their embed exposes **`window.umami`**). `require('umami-kit')` and **`window.UmamiTracker`** are that class. **`window.UmamiKit`** is the same constructor, kept only as a short alias tied to the package name.
 
-## Installation & Setup
+See [this blog post](https://www.rhelmer.org/blog/automatic-event-tracking-with-umami-kit/) for background.
 
-### Basic Setup
+## Compatibility
+
+Use the **modern embed** from your Umami install or [Umami Cloud](https://cloud.umami.is/) (typically `script.js`). The kit waits until `window.umami.track` is a function, then starts.
+
+| Umami (app / release) | Tracker expectations | umami-kit |
+| --- | --- | --- |
+| **Before v2.0.0** | Legacy tracker may not support custom events via `umami.track(name, data)` as in current docs | **Unsupported** — upgrade and use the current `script.js` |
+| **v2.0.0 – latest v2.x** | [Track events](https://docs.umami.is/docs/track-events), [Tracker functions](https://docs.umami.is/docs/tracker-functions) | **Supported** |
+| **v3.x** | Same `umami.track` API; optional native [`data-performance`](https://docs.umami.is/docs/performance) (Core Web Vitals, from v3.1+) is independent of this kit | **Supported** |
+| **Umami Cloud** | Current production tracker | **Supported** with the embed URL from your workspace |
+
+Patch releases within a major line should remain compatible. If your host renames the script, keep the same `data-website-id` (and optional [`data-host-url`](https://docs.umami.is/docs/tracker-configuration)) as in Umami’s docs.
+
+## Built-in Umami vs this kit
+
+| Area | Umami (latest docs) | This kit |
+| --- | --- | --- |
+| Declarative clicks | [`data-umami-event`](https://docs.umami.is/docs/track-events) + `data-umami-event-*` (string properties) | **`data-umami-track`** + optional `data-umami-data-*`; calls `umami.track()` from JavaScript |
+| Custom events | `umami.track('event', { … })` | Same — the kit emits opinionated event names (`scroll-depth`, `time-on-page`, etc.) |
+| Outbound links | Documented pattern with `data-umami-event` or a small attribute injector | Automatic `external-link-click` for external `<a href>` without annotating each link |
+| Web Vitals | Optional `data-performance="true"` on the Umami script (v3.1+) | Not included — use Umami’s native switch if you want CWV |
+
+You can mix native `data-umami-event` elements and this kit on the same page.
+
+## Installation and setup
+
+### Basic setup
+
+Load **Umami’s script first**, then this file (both `defer` is a common pattern). See [Tracker configuration](https://docs.umami.is/docs/tracker-configuration) for `data-host-url`, `data-auto-track`, `data-do-not-track`, etc.
 
 ```html
-<!-- Include your Umami script first -->
-<script async src="https://analytics.yourdomain.com/script.js" data-website-id="your-website-id"></script>
-
-<!-- Include the UmamiKit -->
+<script
+  defer
+  src="https://analytics.example.com/script.js"
+  data-website-id="00000000-0000-0000-0000-000000000000"
+></script>
 <script defer src="umami-kit.js"></script>
+```
 
+In Node or a bundled app, `const UmamiTracker = require('umami-kit')` is that class (you still need the Umami embed on the page for `window.umami`).
+
+Auto-initialize by putting **`data-umami-auto-track`** on `html` or `body`, or construct **`new UmamiTracker(options)`** yourself (see below). When auto-init runs, the instance is **`window.umamiTracker`**.
+
+```html
 <!-- Auto-initialize with basic tracking -->
 <html data-umami-auto-track>
 
 <!-- Auto-initialize with ALL click tracking enabled -->
-<body 
+<body
   data-umami-auto-track
   data-umami-auto-track-all-clicks="true"
   data-umami-debug="true">
 
 <!-- Auto-initialize with custom configuration -->
-<html 
+<html
   data-umami-auto-track
   data-umami-scroll-thresholds="20,40,60,80,100"
   data-umami-heartbeat="15000"
   data-umami-debug="true">
+```
 
+```html
 <script>
-// Or initialize manually with full control
-const kit = new UmamiKit({
-  debug: true,
-  autoTrackAllClicks: true, // Track ALL clickable elements
-  scrollDepthThresholds: [25, 50, 75, 90],
-  heartbeatInterval: 30000
-});
+  const kit = new UmamiTracker({
+    debug: true,
+    autoTrackAllClicks: true,
+    scrollDepthThresholds: [25, 50, 75, 90],
+    heartbeatInterval: 30000
+  });
 </script>
 ```
 
-### Configuration Options
+### Configuration options
 
 ```javascript
-const kit = new UmamiKit({
+const kit = new UmamiTracker({
   // Scroll tracking
   scrollDepthThresholds: [25, 50, 75, 90], // Percentage thresholds
   scrollDebounceMs: 100, // Debounce scroll events
@@ -194,7 +230,7 @@ Track when important content becomes visible:
 
 ## Programmatic API
 
-### Basic Event Tracking
+### Basic event tracking
 
 ```javascript
 // Simple event
@@ -208,7 +244,7 @@ kit.trackEvent('purchase-completed', {
 });
 ```
 
-### Form Tracking
+### Form tracking
 
 ```javascript
 // Track all forms with class 'contact-form'
@@ -218,7 +254,7 @@ kit.trackForm('.contact-form', 'contact-form-submit');
 kit.trackForm('#newsletter-form', 'newsletter-signup');
 ```
 
-### Download Tracking
+### Download tracking
 
 ```javascript
 // Track common file downloads (PDF, ZIP, DOC)
@@ -228,7 +264,7 @@ kit.trackDownloads();
 kit.trackDownloads('a[href$=".pdf"], a[href$=".xlsx"]');
 ```
 
-### Search Tracking
+### Search tracking
 
 ```javascript
 // Track internal search
@@ -316,8 +352,11 @@ console.log(stats);
 
 ## Best Practices
 
-### 1. Event Naming Convention
-Use consistent, descriptive event names:
+### 1. Event naming and Umami limits
+
+Umami applies limits to custom events (see [Track events](https://docs.umami.is/docs/track-events) and [Tracker functions](https://docs.umami.is/docs/tracker-functions)): for example, **event names up to 50 characters**, and structured limits on event payload size and property counts. Stay within those bounds for reliable ingestion.
+
+Use consistent, descriptive names:
 - `button-click` vs `btn_click` vs `buttonClick`
 - `page-view` vs `pageview`
 - `form-submit` vs `form_submission`
@@ -363,8 +402,8 @@ kit.destroy();
 Enable debug mode to see what's being tracked:
 
 ```javascript
-const kit = new UmamiKit({ debug: true });
-// Console will show: [UmamiKit] Event tracked: scroll-depth { depth: 25, percentage: "25%" }
+const kit = new UmamiTracker({ debug: true });
+// Console will show: [UmamiTracker] Event tracked: scroll-depth { depth: 25, percentage: "25%" }
 ```
 
 ## Integration Examples
@@ -376,13 +415,13 @@ import { useEffect } from 'react';
 
 function App() {
   useEffect(() => {
-    const kit = new UmamiKit({
+    const kit = new UmamiTracker({
       debug: process.env.NODE_ENV === 'development'
     });
 
     // Track React-specific events
-    kit.trackEvent('app-loaded', { 
-      version: process.env.REACT_APP_VERSION 
+    kit.trackEvent('app-loaded', {
+      version: process.env.REACT_APP_VERSION
     });
 
     return () => kit.destroy();
@@ -408,7 +447,9 @@ function App() {
 }
 ```
 
-### Vue.js Integration
+### Vue.js integration
+
+Use `beforeDestroy` instead of `beforeUnmount` if you are on Vue 2.
 
 ```vue
 <template>
@@ -424,13 +465,13 @@ export default {
   mounted() {
     this.kit = new UmamiKit();
   },
-  
-  beforeDestroy() {
+
+  beforeUnmount() {
     if (this.kit) {
       this.kit.destroy();
     }
   },
-  
+
   methods: {
     trackPurchase() {
       this.kit.trackEvent('purchase-click', {
@@ -443,4 +484,4 @@ export default {
 </script>
 ```
 
-This utility package provides comprehensive tracking capabilities while maintaining Umami's privacy-first philosophy and giving you full control over what data is collected.
+**umami-kit** adds engagement-oriented events on top of Umami’s tracker while keeping the same privacy posture; you control what you mark up and which options you enable.

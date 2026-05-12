@@ -55,7 +55,7 @@ const mockWindow = {
 global.document = mockDocument;
 global.window = mockWindow;
 
-describe('UmamiKit', () => {
+describe('UmamiTracker', () => {
     let tracker;
 
     beforeEach(() => {
