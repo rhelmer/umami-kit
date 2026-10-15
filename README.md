@@ -2,6 +2,11 @@
 
 A comprehensive utility package for enhanced Umami Analytics tracking that handles clicks, scroll depth, time on page, element visibility, and more.
 
+> **Naming:** the npm package is `umami-kit`, but the class it exports is
+> **`UmamiTracker`** — named to avoid confusion with Umami's own `window.umami`.
+> Use `new UmamiTracker(...)`; the lowercase instance is still exposed as
+> `window.umamiTracker`. The examples below use the real class name.
+
 See [my blog post](https://www.rhelmer.org/blog/automatic-event-tracking-with-umami-kit/) for more info.
 
 ## Installation & Setup
@@ -12,7 +17,7 @@ See [my blog post](https://www.rhelmer.org/blog/automatic-event-tracking-with-um
 <!-- Include your Umami script first -->
 <script async src="https://analytics.yourdomain.com/script.js" data-website-id="your-website-id"></script>
 
-<!-- Include the UmamiKit -->
+<!-- Include the kit (exposes UmamiTracker) -->
 <script defer src="umami-kit.js"></script>
 
 <!-- Auto-initialize with basic tracking -->
@@ -33,7 +38,7 @@ See [my blog post](https://www.rhelmer.org/blog/automatic-event-tracking-with-um
 
 <script>
 // Or initialize manually with full control
-const kit = new UmamiKit({
+const kit = new UmamiTracker({
   debug: true,
   autoTrackAllClicks: true, // Track ALL clickable elements
   scrollDepthThresholds: [25, 50, 75, 90],
@@ -45,7 +50,7 @@ const kit = new UmamiKit({
 ### Configuration Options
 
 ```javascript
-const kit = new UmamiKit({
+const kit = new UmamiTracker({
   // Scroll tracking
   scrollDepthThresholds: [25, 50, 75, 90], // Percentage thresholds
   scrollDebounceMs: 100, // Debounce scroll events
@@ -363,8 +368,8 @@ kit.destroy();
 Enable debug mode to see what's being tracked:
 
 ```javascript
-const kit = new UmamiKit({ debug: true });
-// Console will show: [UmamiKit] Event tracked: scroll-depth { depth: 25, percentage: "25%" }
+const kit = new UmamiTracker({ debug: true });
+// Console will show: [UmamiTracker] Event tracked: scroll-depth { depth: 25, percentage: "25%" }
 ```
 
 ## Integration Examples
@@ -376,7 +381,7 @@ import { useEffect } from 'react';
 
 function App() {
   useEffect(() => {
-    const kit = new UmamiKit({
+    const kit = new UmamiTracker({
       debug: process.env.NODE_ENV === 'development'
     });
 
@@ -422,7 +427,7 @@ function App() {
 <script>
 export default {
   mounted() {
-    this.kit = new UmamiKit();
+    this.kit = new UmamiTracker();
   },
   
   beforeDestroy() {
